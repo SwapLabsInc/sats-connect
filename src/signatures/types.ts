@@ -8,6 +8,6 @@ export interface SignMessagePayload {
 
 export interface SignMessageOptions {
   onFinish: (response: string) => void;
-  onCancel: () => void;
+  onCancel: (error?: any) => void;
   payload: SignMessagePayload;
 }

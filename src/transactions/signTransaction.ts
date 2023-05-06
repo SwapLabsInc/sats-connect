@@ -20,7 +20,7 @@ export interface SignTransactionPayload {
 export interface SignTransactionOptions {
   payload: SignTransactionPayload;
   onFinish: (response: any) => void;
-  onCancel: () => void;
+  onCancel: (error?: any) => void;
 }
 
 export interface SignTransactionResponse {
@@ -47,7 +47,7 @@ export const signTransaction = async (options: SignTransactionOptions) => {
       options.onFinish?.(addressResponse);
     } catch (error) {
       console.error('[Connect] Error during signPsbt request', error);
-      options.onCancel?.();
+      options.onCancel?.(error);
     }
 };
 

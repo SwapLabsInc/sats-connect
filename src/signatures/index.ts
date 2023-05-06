@@ -19,7 +19,7 @@ export const signMessage = async (options: SignMessageOptions) => {
     options.onFinish?.(response);
   } catch (error) {
     console.error('[Connect] Error during Signing request', error);
-    options.onCancel?.();
+    options.onCancel?.(error);
   }
 };
 
