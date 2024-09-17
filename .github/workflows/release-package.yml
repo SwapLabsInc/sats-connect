@@ -2,7 +2,7 @@ name: Release & Publish Package
 
 on:
   release:
-    types: [published]
+    types: [released, prereleased]
 
 jobs:
   build:
@@ -29,11 +29,19 @@ jobs:
           registry-url: https://registry.npmjs.org
       - run: npm ci
       - run: npm run build
-      - run: npm publish --tag prerelease
+      - id: publish-prerelease
         if: github.event.release.prerelease
+        run: npm publish --tag prerelease
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-      - run: npm publish
-        if: "!github.event.release.prerelease"
+      - id: npm-publish-latest
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: npm publish
+      - id: set-dist-tag-latest
+        if: ${{steps.npm-publish-latest.outcome.failure}}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: |
+          VERSION=$(npm pkg get version | jq . -r)
+          npm dist-tag add sats-connect@$VERSION latest
